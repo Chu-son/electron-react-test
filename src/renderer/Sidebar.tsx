@@ -12,8 +12,9 @@ export default () => {
   return (
     <aside className="sidebar">
       <div className="description">
-        You can drag these nodes to the pane on the right.
+        Node
       </div>
+
       <div
         className="dndnode input"
         onDragStart={(event) => onDragStart(event, 'input')}
@@ -21,6 +22,7 @@ export default () => {
       >
         Input Node
       </div>
+
       <div
         className="dndnode"
         onDragStart={(event) => onDragStart(event, 'default')}
@@ -28,6 +30,15 @@ export default () => {
       >
         Default Node
       </div>
+
+      <div
+        className="dndnode task"
+        onDragStart={(event) => onDragStart(event, 'task')}
+        draggable
+      >
+        Task Node
+      </div>
+
       <div
         className="dndnode output"
         onDragStart={(event) => onDragStart(event, 'output')}

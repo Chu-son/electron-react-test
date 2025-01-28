@@ -15,6 +15,12 @@ import '@xyflow/react/dist/style.css';
 import Sidebar from './Sidebar';
 import { DnDProvider, useDnD } from './DnDContext';
 
+import TaskNode from './TaskNode';
+
+const nodeTypes = {
+  task: TaskNode,
+};
+
 const initialNodes = [
   {
     id: '1',
@@ -27,7 +33,7 @@ const initialNodes = [
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-const DnDFlow = () => {
+function DnDFlow() {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -87,6 +93,7 @@ const DnDFlow = () => {
           onDrop={onDrop}
           onDragOver={onDragOver}
           fitView
+          nodeTypes={nodeTypes}
           style={{ backgroundColor: '#F7F9FB' }}
           colorMode="system"
         >
@@ -97,7 +104,7 @@ const DnDFlow = () => {
       <Sidebar />
     </div>
   );
-};
+}
 
 export default function Flowchart() {
   return (
