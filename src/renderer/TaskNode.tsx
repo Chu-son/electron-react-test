@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import {
   Position,
   Handle,
@@ -7,24 +7,35 @@ import {
   type Node,
 } from '@xyflow/react';
 
-function TaskNode({ id, data }: NodeProps<Node<{ duration: number }, "task">>) {
-  const { updateNodeData } = useReactFlow();
+type TaskNodeData = {
+  duration: number;
+  totalDuration: number;
+};
+
+function TaskNode({ id, data }: NodeProps<Node<TaskNodeData, 'task'>>) {
+  const { updateNodeData, getNode, getEdges } = useReactFlow();
+  const [totalDuration, setTotalDuration] = useState(data.totalDuration || 0);
+  const [taskNode, setTaskNode] = useState(data);
 
   useEffect(() => {
     console.log(`TaskNode ${id} created`);
   }, [id]);
 
-  const handleChange = (event) => {
-    let value = event.target.value;
-    if (value === '') {
-      value = 0;
-    } else {
-      value = parseFloat(value);
+  useEffect(() => {
+    const edges = getEdges();
+    const incomingEdges = edges.filter(edge => edge.target === id);
+    let previousTotalDuration = 0;
+
+    if (incomingEdges.length > 0) {
+      const previousNodeId = incomingEdges[0].source;
+      const previousNode = getNode(previousNodeId);
+      previousTotalDuration = previousNode?.data?.totalDuration || 0;
     }
-    if (!isNaN(value)) {
-      updateNodeData(id, { duration: value });
-    }
-  };
+
+    const newTotalDuration = previousTotalDuration + taskNode.duration;
+    setTotalDuration(newTotalDuration);
+    updateNodeData(id, { ...taskNode, totalDuration: newTotalDuration });
+  }, [taskNode.duration, id, getNode, getEdges, updateNodeData]);
 
   const handleBlur = (event) => {
     let value = event.target.value;
@@ -34,7 +45,8 @@ function TaskNode({ id, data }: NodeProps<Node<{ duration: number }, "task">>) {
       value = parseFloat(value);
     }
     if (!isNaN(value)) {
-      updateNodeData(id, { duration: value });
+      setTaskNode({ ...taskNode, duration: value });
+      updateNodeData(id, { ...taskNode, duration: value });
     }
   };
 
@@ -42,15 +54,30 @@ function TaskNode({ id, data }: NodeProps<Node<{ duration: number }, "task">>) {
     <div>
       <Handle type="target" position={Position.Top} />
       <div>node {id}</div>
-      <input
-        type="text"
-        // value={data.duration}
-        // onChange={handleChange}
-        onBlur={handleBlur}
-      />
+      <label>
+        Duration:
+        <input type="text" value={taskNode.duration} onBlur={handleBlur} />
+      </label>
+      <div>Total Duration: {totalDuration}</div>
       <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }
 
+const TaskStartNode = ({ id }) => (
+  <div>
+    <div>Task Start Node {id}</div>
+    <Handle type="source" position={Position.Bottom} />
+  </div>
+);
+
+const TaskEndNode = ({ id }) => (
+  <div>
+    <Handle type="target" position={Position.Top} />
+    <div>Task End Node {id}</div>
+  </div>
+);
+
+export const MemoizedTaskStartNode = memo(TaskStartNode);
+export const MemoizedTaskEndNode = memo(TaskEndNode);
 export default memo(TaskNode);

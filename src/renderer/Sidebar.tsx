@@ -11,24 +11,14 @@ export default () => {
 
   return (
     <aside className="sidebar">
-      <div className="description">
-        Node
-      </div>
-
-      <div
-        className="dndnode input"
-        onDragStart={(event) => onDragStart(event, 'input')}
-        draggable
-      >
-        Input Node
-      </div>
+      <div className="description">Node</div>
 
       <div
         className="dndnode"
-        onDragStart={(event) => onDragStart(event, 'default')}
+        onDragStart={(event) => onDragStart(event, 'taskStart')}
         draggable
       >
-        Default Node
+        Task Start Node
       </div>
 
       <div
@@ -40,11 +30,11 @@ export default () => {
       </div>
 
       <div
-        className="dndnode output"
-        onDragStart={(event) => onDragStart(event, 'output')}
+        className="dndnode"
+        onDragStart={(event) => onDragStart(event, 'taskEnd')}
         draggable
       >
-        Output Node
+        Task End Node
       </div>
     </aside>
   );

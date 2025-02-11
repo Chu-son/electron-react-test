@@ -15,23 +15,26 @@ import '@xyflow/react/dist/style.css';
 import Sidebar from './Sidebar';
 import { DnDProvider, useDnD } from './DnDContext';
 
-import TaskNode from './TaskNode';
+import TaskNode, { MemoizedTaskStartNode, MemoizedTaskEndNode } from './TaskNode';
 
 const nodeTypes = {
+  taskStart: MemoizedTaskStartNode,
   task: TaskNode,
+  taskEnd: MemoizedTaskEndNode,
 };
+
+
+let id = 0;
+const getId = () => `${id++}`;
 
 const initialNodes = [
   {
-    id: '1',
-    type: 'input',
-    data: { label: 'input node' },
+    id: getId(),
+    type: 'taskStart',
+    data: { label: 'Task Start Node' },
     position: { x: 250, y: 5 },
   },
 ];
-
-let id = 0;
-const getId = () => `dndnode_${id++}`;
 
 function DnDFlow() {
   const reactFlowWrapper = useRef(null);
